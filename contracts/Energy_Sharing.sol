@@ -15,15 +15,28 @@ contract Energy_Sharing {
 
     function Energy_Sharing(uint _Token, bytes32 _Status) public{ // constructor 
         address meter = msg.sender;
+        uint donoting;
+        if(Validation(meter) == false){
+            donoting = 1;
+        }
+        else{
+            NeibourhoodMeters.push(meter);
+            _MeterWallet[meter].Token = _Token; // each meter has initial token of 100
+            _MeterWallet[meter].Status = _Status; // each meter has default status of not traded
+        }
+    }
+    
+    function Validation(address _meter) returns(bool){
         for(uint i = 0; i < NeibourhoodMeters.length; i++ ){
-            if(NeibourhoodMeters[i] == meter){
-                revert(); // make sure it is not double registed
+            if(NeibourhoodMeters[i] == _meter){
+                return false; // make sure it is not double registed
             }
         }
-        NeibourhoodMeters.push(meter);
-        _MeterWallet[meter].Token = _Token; // each meter has initial token of 100
-        _MeterWallet[meter].Status = _Status; // each meter has default status of not traded
+        
+        return true;
+            
     }
+    
 
     function PostRequest(bytes32 inquiry) public{
         if(inquiry == "buy"){
